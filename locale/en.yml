@@ -1,7 +1,9 @@
 nodeloc-telegram-notification:
-  # For more details on the format
-  # Checkout https://docs.flarum.org/extend/i18n/#appendix-a-standard-key-format
   admin:
-    my_cool_key: My Cool Key
-
-  forum:
+    settings:
+      bot_token_label: Telegram Bot Token
+      bot_token_help: The token issued by @BotFather.
+      channel_id_label: Telegram Channel ID
+      channel_id_help: The channel username, such as @your_channel, or a numeric chat ID.
+      excluded_tags_label: Excluded tag IDs
+      excluded_tags_help: Comma-separated tag IDs that should not be sent to Telegram, such as 2,3.

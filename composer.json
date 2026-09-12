@@ -7,7 +7,8 @@
     "type": "flarum-extension",
     "license": "CC-BY-ND-2.5",
     "require": {
-        "flarum/core": "^1.2.0"
+        "php": "^8.3",
+        "flarum/core": "^2.0.0-rc.8"
     },
     "authors": [
         {
@@ -20,6 +21,10 @@
         "psr-4": {
             "Nodeloc\\TelegramNotification\\": "src/"
         }
+    },
+    "support": {
+        "issues": "https://github.com/lowseekai/flarum-telegram-notification/issues",
+        "source": "https://github.com/lowseekai/flarum-telegram-notification"
     },
     "extra": {
         "flarum-extension": {
@@ -73,6 +78,6 @@
         "test:setup": "Sets up a database for use with integration tests. Execute this only once."
     },
     "require-dev": {
-        "flarum/testing": "^1.0.0"
+        "flarum/testing": "^2.0.0-rc.8"
     }
 }

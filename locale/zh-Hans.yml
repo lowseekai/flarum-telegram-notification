@@ -1,0 +1,9 @@
+nodeloc-telegram-notification:
+  admin:
+    settings:
+      bot_token_label: Telegram Bot Token
+      bot_token_help: 由 @BotFather 生成的机器人 Token。
+      channel_id_label: Telegram 频道 ID
+      channel_id_help: 可以填写频道用户名（例如 @your_channel）或数字聊天 ID。
+      excluded_tags_label: 排除的标签 ID
+      excluded_tags_help: 填写不推送到 Telegram 的标签 ID，多个 ID 使用英文逗号分隔，例如 2,3。

@@ -1,55 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nodeloc\TelegramNotification\Listeners;
 
+use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Started;
-use Nodeloc\TelegramNotification\Jobs\SendTelegramNotificationJob;
-use Illuminate\Contracts\Queue\Queue;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Illuminate\Contracts\Queue\Queue;
+use Nodeloc\TelegramNotification\Jobs\SendTelegramNotificationJob;
 
-class SendTelegramNotification
+final class SendTelegramNotification
 {
-    protected $queue;
-    protected $settings;
-
-    public function __construct(Queue $queue, SettingsRepositoryInterface $settings)
-    {
-        $this->queue = $queue;
-        $this->settings = $settings;
+    public function __construct(
+        private Queue $queue,
+        private SettingsRepositoryInterface $settings
+    ) {
     }
 
-    protected function shouldExclude($discussion)
+    private function shouldExclude(Discussion $discussion): bool
     {
-        $excludedTags = $this->settings->get('telegram.excluded_tags');
-        if (!$excludedTags) {
+        $excludedTags = trim((string) $this->settings->get('telegram.excluded_tags'));
+
+        if ($excludedTags === '') {
             return false;
         }
 
-        // 将排除的标签ID转换为数组
-        $excludedTagIds = array_map('trim', explode(',', $excludedTags));
+        $excludedTagIds = array_values(array_filter(
+            array_map(
+                static fn (string $id): int => (int) $id,
+                preg_split('/\s*,\s*/', $excludedTags, -1, PREG_SPLIT_NO_EMPTY) ?: []
+            ),
+            static fn (int $id): bool => $id > 0
+        ));
 
-        // 获取讨论的标签ID
-        $discussionTagIds = $discussion->tags->pluck('id')->toArray();
+        if ($excludedTagIds === []) {
+            return false;
+        }
 
-        // 检查是否有交集
-        return !empty(array_intersect($excludedTagIds, $discussionTagIds));
+        $discussion->loadMissing('tags');
+
+        $discussionTagIds = $discussion->tags
+            ->pluck('id')
+            ->map(static fn ($id): int => (int) $id)
+            ->all();
+
+        return (bool) array_intersect($excludedTagIds, $discussionTagIds);
     }
 
-    public function handle(Started $event)
+    public function handle(Started $event): void
     {
         $discussion = $event->discussion;
 
-        // 检查是否应该排除这个主题
         if ($this->shouldExclude($discussion)) {
             return;
         }
 
-        $job = new SendTelegramNotificationJob(
-            $discussion->title,
-            $discussion->id
-        );
-
-        $this->queue->push($job);
-
+        $this->queue->push(new SendTelegramNotificationJob(
+            (string) $discussion->title,
+            (int) $discussion->id
+        ));
     }
 }

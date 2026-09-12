@@ -1,22 +1,24 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('nodeloc-telegram-notification', () => {
-  app.extensionData
+  app.registry
     .for('nodeloc-telegram-notification')
     .registerSetting({
       setting: 'telegram.bot_token',
-      label: 'Telegram Bot Token',
+      label: app.translator.trans('nodeloc-telegram-notification.admin.settings.bot_token_label'),
+      help: app.translator.trans('nodeloc-telegram-notification.admin.settings.bot_token_help'),
       type: 'text',
     })
     .registerSetting({
       setting: 'telegram.channel_id',
-      label: 'Telegram Channel ID',
+      label: app.translator.trans('nodeloc-telegram-notification.admin.settings.channel_id_label'),
+      help: app.translator.trans('nodeloc-telegram-notification.admin.settings.channel_id_help'),
       type: 'text',
     })
     .registerSetting({
-    setting: 'telegram.excluded_tags',
-    label: 'Exclude tags',
-    help: 'Input exclude tabs：1,2,3',
-    type: 'text',
-  });
+      setting: 'telegram.excluded_tags',
+      label: app.translator.trans('nodeloc-telegram-notification.admin.settings.excluded_tags_label'),
+      help: app.translator.trans('nodeloc-telegram-notification.admin.settings.excluded_tags_help'),
+      type: 'text',
+    });
 });
